@@ -1,0 +1,37 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div id="questions-container">
+        <!-- Dynamic questions will be appended here -->
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#id_template').change(function () {
+            var templateId = $(this).val();
+            $.ajax({
+                url: '/get-template-questions/' + templateId,
+                success: function (questions) {
+                    // Clear existing questions
+                    $('#questions-container').empty();
+
+                    // Add new questions
+                    questions.forEach(function (question) {
+                        $('#questions-container').append(
+                            '<div>' + question.text + ': ' +
+                            '<input type="radio" name="answer_' + question.id + '" value="yes"> Yes ' +
+                            '<input type="radio" name="answer_' + question.id + '" value="no"> No ' +
+                            '<input type="radio" name="answer_' + question.id + '" value="na"> Not Applicable ' +
+                            '<input type="radio" name="answer_' + question.id + '" value="nr"> Not Answered ' +
+                            '<input type="text" name="explanation_' + question.id + '" placeholder="Explanation">' +
+                            '</div>'
+                        );
+                    });
+                }
+            });
+        });
+    });
+</script>

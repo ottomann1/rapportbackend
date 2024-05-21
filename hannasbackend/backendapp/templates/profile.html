@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Your Reports</h2>
+{% if reports %}
+    <ul>
+        {% for report in reports %}
+            <li>
+                <strong>{{ report.report_title }}</strong> (submitted on {{ report.submitted_on }})<br>
+                Last updated: {{ report.last_updated }}<br>
+                <!-- Display other fields as needed -->
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have not submitted any reports.</p>
+{% endif %}
+{% endblock %}

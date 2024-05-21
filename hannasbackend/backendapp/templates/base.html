@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Site{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'backendapp/css/style.css' %}">
+    <!-- Add any CSS or JS links here -->
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">MySite</div>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <!-- More navigation items here -->
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
+            
+            {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+    
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

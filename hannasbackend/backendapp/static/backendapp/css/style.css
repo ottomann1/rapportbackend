@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+nav {
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e7e7e7;
+}
+.navbar {
+    background-color: #004d99; /* Change the background color */
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar a {
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #003366; /* Darker shade for hover */
+    color: #fff;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar li {
+    padding-left: 16px;
+}
+
+/* Logo or Brand Style */
+.navbar .logo {
+    font-weight: bold;
+    font-size: 1.5em;
+}

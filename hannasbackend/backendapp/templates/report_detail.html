@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Details</title>
+    <style>
+        .report-container { font-family: monospace; }
+        .report-field { margin-left: 20px; }
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <p>{</p>
+
+        <div class="report-field">"id": "{{ report.id }}",</div>
+        <div class="report-field">"report_title": "{{ report.report_title }}",</div>
+        <div class="report-field">"submitted_on": "{{ report.submitted_on }}",</div>
+        <div class="report-field">"last_updated": "{{ report.last_updated }}",</div>
+        <div class="report-field">"template": {</div>
+        <div class="report-field">"id": "{{ report.template.id }}",</div>
+        <div class="report-field">"name": "{{ report.template.name }}",</div>
+        <div class="report-field">"questions": [</div>
+        
+        {% for question in report.template.questions.all %}
+            <div class="report-field">{
+                <div class="report-field">"id": "{{ question.id }}",</div>
+                <div class="report-field">"text": "{{ question.text }}",</div>
+                <div class="report-field">"answers": [</div>
+                {% for answer in report.answers.all %}
+                    {% if answer.question.id == question.id %}
+                        <div class="report-field">{ "answer": "{{ answer.answer }}", "explanation": "{{ answer.explanation }}" }</div>
+                    {% endif %}
+                {% endfor %}
+                <div class="report-field">]</div>
+            <div class="report-field">},</div>
+        {% endfor %}
+
+        <div class="report-field">]</div>
+        <div class="report-field">}</div>
+        
+        <p>}</p>
+    </div>
+</body>
+</html>

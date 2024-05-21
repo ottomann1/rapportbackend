@@ -1,0 +1,47 @@
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div id="formset">
+    {{ formset.management_form }}
+    {% for form in formset %}
+    <div class="formset-form">
+        {{ form.as_p }}
+        {{ form.DELETE }}  <!-- Important: Include the DELETE field -->
+        <button type="button" class="remove-form">Remove</button>
+    </div>
+    {% endfor %}
+</div>
+    <button type="button" id="add-form">Add Question</button>
+    <button type="submit">Update</button>
+  </form>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+          $('#add-form').click(function() {
+          var formCount = parseInt($('#id_questions-TOTAL_FORMS').val());
+          var newForm = $('#empty-form').html().replace(/__prefix__/g, formCount);
+          $('#formset').append(newForm);
+          $('#id_questions-TOTAL_FORMS').val(formCount + 1);
+      });
+  
+    $(document).on('click', '.remove-form', function () {
+        var formCount = $('#id_questions-TOTAL_FORMS').val();
+        if (formCount > 1) {
+            $(this).closest('.formset-form').find('input[type=checkbox]').prop('checked', true);
+            $(this).closest('.formset-form').hide();
+            formCount--;
+            $('#id_questions-TOTAL_FORMS').val(formCount);
+        }
+    });
+
+      });
+  </script>
+<div id="empty-form" style="display:none;">
+    <div class="formset-form">
+        {{ formset.empty_form.as_p }}
+        <button type="button" class="remove-form">Remove</button>
+    </div>
+</div>
+{% endblock %}
