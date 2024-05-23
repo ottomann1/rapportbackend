@@ -1,16 +1,18 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
-from .models import (
-    Report,
-    Question,
-    Answer,
-    ReportTemplate,
-    UserProfile,
-)  # Import your models as needed
-from .forms import ReportForm, ReportTemplateForm, QuestionFormset
+from .forms import ReportForm, ReportTemplateForm
 from rest_framework import viewsets
 from .serializers import ReportSerializer, ReportTemplateSerializer
+from .models import Company, UserProfile, ReportTemplate, Question, Report, Answer
+from .serializers import (
+    CompanySerializer,
+    UserProfileSerializer,
+    ReportTemplateSerializer,
+    QuestionSerializer,
+    ReportSerializer,
+    AnswerSerializer,
+)
 
 
 @login_required
@@ -132,11 +134,31 @@ def create_report(request):
     return render(request, "create_report.html", {"form": form})
 
 
-class ReportViewSet(viewsets.ModelViewSet):
-    queryset = Report.objects.all()
-    serializer_class = ReportSerializer
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
 
 
 class ReportTemplateViewSet(viewsets.ModelViewSet):
     queryset = ReportTemplate.objects.all()
     serializer_class = ReportTemplateSerializer
+
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+
+class ReportViewSet(viewsets.ModelViewSet):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.all()
+    serializer_class = AnswerSerializer
