@@ -14,22 +14,32 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ReportTemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ReportTemplate
-        fields = "__all__"
-
-
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = "__all__"
+        fields = ["id", "text", "template", "company"]
 
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
-        fields = "__all__"
+        fields = [
+            "id",
+            "report_title",
+            "submitted_on",
+            "last_updated",
+            "submitted_by",
+            "company",
+        ]
+
+
+class ReportTemplateSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(many=True, read_only=True, source="question_set")
+    reports = ReportSerializer(many=True, read_only=True, source="report_set")
+
+    class Meta:
+        model = ReportTemplate
+        fields = ["id", "name", "accessible_by", "company", "questions", "reports"]
 
 
 class AnswerSerializer(serializers.ModelSerializer):
