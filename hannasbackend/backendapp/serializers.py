@@ -34,7 +34,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
 
 class ReportTemplateSerializer(serializers.ModelSerializer):
-    questions = QuestionSerializer(many=True, read_only=True, source="question_set")
+    questions = QuestionSerializer(many=True, read_only=True)
     reports = ReportSerializer(many=True, read_only=True, source="report_set")
 
     class Meta:
