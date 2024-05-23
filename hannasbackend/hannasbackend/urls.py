@@ -17,18 +17,29 @@ Including another URLconf
 
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from django.urls import path, include
 from backendapp import views
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from backendapp.views import ReportViewSet, ReportTemplateViewSet
+from backendapp.views import (
+    CompanyViewSet,
+    UserProfileViewSet,
+    ReportTemplateViewSet,
+    QuestionViewSet,
+    ReportViewSet,
+    AnswerViewSet,
+)
 
 router = DefaultRouter()
-router.register(r"report", ReportViewSet)
-router.register(r"reporttemplate", ReportTemplateViewSet)
+router.register(r"companies", CompanyViewSet)
+router.register(r"userprofiles", UserProfileViewSet)
+router.register(r"reporttemplates", ReportTemplateViewSet)
+router.register(r"questions", QuestionViewSet)
+router.register(r"reports", ReportViewSet)
+router.register(r"answers", AnswerViewSet)
 
 urlpatterns = [
+    path("api/", include(router.urls)),
     path("admin/", admin.site.urls),
-    path("reports/", views.report_list, name="report_list"),
     path(
         "create-report-template/",
         views.create_report_template,
