@@ -14,13 +14,25 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ["id", "question", "report", "answer", "explanation", "company"]
+
+
 class QuestionSerializer(serializers.ModelSerializer):
+    answers = AnswerSerializer(many=True, read_only=True, source="answer_set")
+
     class Meta:
         model = Question
-        fields = ["id", "text", "template", "company"]
+        fields = ["id", "text", "template", "company", "answers"]
 
 
 class ReportSerializer(serializers.ModelSerializer):
+    questions = QuestionSerializer(
+        many=True, read_only=True, source="template.questions"
+    )
+
     class Meta:
         model = Report
         fields = [
@@ -30,6 +42,7 @@ class ReportSerializer(serializers.ModelSerializer):
             "last_updated",
             "submitted_by",
             "company",
+            "questions",
         ]
 
 
@@ -40,9 +53,3 @@ class ReportTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportTemplate
         fields = ["id", "name", "accessible_by", "company", "questions", "reports"]
-
-
-class AnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Answer
-        fields = "__all__"
