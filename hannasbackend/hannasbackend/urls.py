@@ -28,6 +28,10 @@ from backendapp.views import (
     ReportViewSet,
     AnswerViewSet,
 )
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 router = DefaultRouter()
 router.register(r"companies", CompanyViewSet)
@@ -45,6 +49,8 @@ urlpatterns = [
         views.create_report_template,
         name="create_report_template",
     ),
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path(
         "update-report-template/<int:template_id>/",
         views.update_report_template,
