@@ -1,6 +1,47 @@
 from django.db import models
 from django.conf import settings
 
+from django.contrib.auth.models import Group, Permission
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+
+
+@receiver(post_migrate)
+def create_user_roles(sender, **kwargs):
+    superadmin, created = Group.objects.get_or_create(name="superadmin")
+    admin, created = Group.objects.get_or_create(name="admin")
+    user, created = Group.objects.get_or_create(name="user")
+
+    if created:
+        # Define permissions for each group
+        # Superadmin has all permissions
+        superadmin.permissions.set(Permission.objects.all())
+
+        # Admin permissions
+        admin_permissions = [
+            "add_company",
+            "change_company",
+            "view_company",
+            "delete_company",
+            "add_report",
+            "change_report",
+            "view_report",
+            "delete_report",
+            # Add other permissions as needed
+        ]
+        admin.permissions.set(Permission.objects.filter(codename__in=admin_permissions))
+
+        # User permissions
+        user_permissions = [
+            "add_report",
+            "change_report",
+            "view_report",
+            # Add other permissions as needed
+        ]
+        user.permissions.set(Permission.objects.filter(codename__in=user_permissions))
+
+        print("User roles created or updated successfully.")
+
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
