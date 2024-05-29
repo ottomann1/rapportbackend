@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
+from django.urls import path
+from django.contrib.auth.models import User, Group
 from .forms import ReportForm, ReportTemplateForm
 from rest_framework import viewsets
-from .serializers import ReportSerializer, ReportTemplateSerializer
 from .models import Company, UserProfile, ReportTemplate, Question, Report, Answer
 from .serializers import (
     CompanySerializer,
@@ -13,6 +14,47 @@ from .serializers import (
     ReportSerializer,
     AnswerSerializer,
 )
+from .permissions import IsSuperAdmin, IsAdmin, IsUser, IsOwnerOrReadOnly
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+
+urlpatterns = [
+    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+]
+
+
+@api_view(["POST"])
+def register_user(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+    role = request.data.get("role")  # 'superadmin', 'admin', or 'user'
+
+    if username is None or password is None or role is None:
+        return Response(
+            {"error": "Please provide username, password, and role"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if User.objects.filter(username=username).exists():
+        return Response(
+            {"error": "Username already exists"}, status=status.HTTP_400_BAD_REQUEST
+        )
+
+    user = User.objects.create_user(username=username, password=password)
+    group = Group.objects.get(name=role)
+    user.groups.add(group)
+
+    return Response(
+        {"message": "User created successfully"}, status=status.HTTP_201_CREATED
+    )
 
 
 @login_required
@@ -155,8 +197,23 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 
 class ReportViewSet(viewsets.ModelViewSet):
-    queryset = Report.objects.all()
+    queryset = Report.objects.all()  # Add this line
     serializer_class = ReportSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.groups.filter(name="superadmin").exists():
+            return Report.objects.all()
+        elif user.groups.filter(name="admin").exists():
+            return Report.objects.filter(company=user.profile.company)
+        else:
+            return Report.objects.filter(submitted_by=user)
+
+    def perform_create(self, serializer):
+        serializer.save(
+            submitted_by=self.request.user, company=self.request.user.profile.company
+        )
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
