@@ -27,6 +27,7 @@ from backendapp.views import (
     QuestionViewSet,
     ReportViewSet,
     AnswerViewSet,
+    user_info,
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -43,6 +44,7 @@ router.register(r"answers", AnswerViewSet)
 
 urlpatterns = [
     path("api/", include(router.urls)),
+    path("api/user/", user_info),
     path("admin/", admin.site.urls),
     path(
         "create-report-template/",

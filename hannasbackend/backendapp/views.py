@@ -20,15 +20,21 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 
-urlpatterns = [
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-]
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def user_info(request):
+    user = request.user
+    return Response(
+        {
+            "username": user.username,
+            "company": user.profile.company.name,  # Assuming a profile model with a company relationship
+        }
+    )
 
 
 @api_view(["POST"])
