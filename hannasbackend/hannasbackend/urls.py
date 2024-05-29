@@ -34,7 +34,7 @@ router.register(r"companies", CompanyViewSet)
 router.register(r"userprofiles", UserProfileViewSet)
 router.register(r"reporttemplates", ReportTemplateViewSet)
 router.register(r"questions", QuestionViewSet)
-router.register(r"reports", ReportViewSet)
+router.register(r"reports", ReportViewSet, basename="report")
 router.register(r"answers", AnswerViewSet)
 
 urlpatterns = [
